@@ -161,7 +161,7 @@
             gap: 10px;
             padding: 10px;
             height: 25vh; 
-            margin-bottom: 20px; 
+            margin-bottom: 5px; /* Reduced from 20px */
         }
         .btn-main {
             border: none;
@@ -189,7 +189,7 @@
             justify-content: center;
             padding: 0 10px 10px 10px;
             gap: 10px;
-            margin-bottom: 30px; /* Safe margin */
+            margin-bottom: 5px; /* Reduced from 30px */
         }
         .btn-utility {
             background: #333;
@@ -204,10 +204,21 @@
         .reset-section {
             display: flex;
             justify-content: space-between;
-            padding: 10px 20px;
+            padding: 10px 20px 60px 20px; /* Added 60px padding at bottom */
             background: #000;
             flex-wrap: wrap;
             gap: 10px;
+            position: fixed; /* Fix to bottom */
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box; /* Ensure padding is inside width */
+            z-index: 10;
+        }
+        
+        /* Add spacer to prevent content from being hidden behind fixed footer */
+        .footer-spacer {
+            height: 120px;
         }
         .btn-text {
             background: none;
@@ -342,9 +353,11 @@
         <button class="btn-main btn-out" onclick="addOut()">出局<br><span style="font-size:0.7rem">Out</span></button>
     </div>
     
-    <div class="utility-row" style="margin-bottom: 30px;"> <!-- Added extra safe margin -->
+    <div class="utility-row" style="margin-bottom: 5px;"> 
         <button class="btn-utility" onclick="clearOuts()">清除出局數 (Clear Out)</button>
     </div>
+
+    <div class="footer-spacer"></div>
 
     <div class="reset-section">
         <button class="btn-text" onclick="resetCount()">重置球數 (New AB)</button>
