@@ -367,6 +367,26 @@
         <button class="btn-action" onclick="clearOuts()">清除出局<br>(Clear Out)</button>
         <button class="btn-action btn-danger" onclick="resetGame()">新比賽<br>(New Game)</button>
     </div>
+    
+    <!-- Buy Me a Coffee Button (Fixed Bottom-Right) -->
+    <a href="https://buymeacoffee.com/zpin" target="_blank" class="bmc-button">
+        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important; width: 145px !important;" >
+    </a>
+
+    <style>
+        .bmc-button {
+            position: fixed;
+            bottom: 100px; /* Above the bottom action bar */
+            right: 15px;
+            z-index: 999;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border-radius: 5px;
+        }
+        .bmc-button:active {
+            transform: scale(0.95);
+        }
+    </style>
 
     <script>
         // State
