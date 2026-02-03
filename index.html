@@ -553,9 +553,27 @@
             resetCount();
         }
         
-        // Manual Inning Control
+        // Manual Inning Control (Half-Inning Steps)
         function changeInning(delta) {
-            inning = Math.max(1, inning + delta);
+            if (delta === 1) {
+                // Next Half-Inning
+                if (isTop) {
+                    isTop = false; // Top -> Bottom
+                } else {
+                    isTop = true;  // Bottom -> Top
+                    inning++;      // Next Inning
+                }
+            } else if (delta === -1) {
+                // Prev Half-Inning
+                if (!isTop) {
+                    isTop = true;  // Bottom -> Top
+                } else {
+                    if (inning > 1) {
+                        isTop = false; // Top -> Bottom (of prev inning)
+                        inning--;
+                    }
+                }
+            }
             render();
         }
         
