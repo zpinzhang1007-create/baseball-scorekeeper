@@ -102,8 +102,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 10px;
-            gap: 15px;
+            padding: 5px 10px; /* Reduced padding */
+            gap: 5px; /* Reduced gap */
         }
         
         .count-row {
@@ -140,12 +140,13 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             padding: 10px;
-            height: 30vh;
+            height: 25vh; /* Reduced height from 30vh */
+            margin-bottom: 20px; /* Add margin at bottom to avoid Safari bar overlap */
         }
         .btn-main {
             border: none;
             border-radius: 12px;
-            font-size: 1.5rem;
+            font-size: 1.3rem; /* Slightly smaller font */
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.1s, opacity 0.2s;
@@ -154,6 +155,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 10px 0; /* Adjust padding */
         }
         .btn-main:active { transform: scale(0.96); }
 
@@ -309,12 +311,12 @@
 
     <!-- Controls -->
     <div class="controls">
-        <button class="btn-main btn-ball" onclick="addBall()">壞球<br><span style="font-size:0.8rem">Ball</span></button>
-        <button class="btn-main btn-strike" onclick="addStrike()">好球<br><span style="font-size:0.8rem">Strike</span></button>
-        <button class="btn-main btn-out" onclick="addOut()">出局<br><span style="font-size:0.8rem">Out</span></button>
+        <button class="btn-main btn-ball" onclick="addBall()">壞球<br><span style="font-size:0.7rem">Ball</span></button>
+        <button class="btn-main btn-strike" onclick="addStrike()">好球<br><span style="font-size:0.7rem">Strike</span></button>
+        <button class="btn-main btn-out" onclick="addOut()">出局<br><span style="font-size:0.7rem">Out</span></button>
     </div>
     
-    <div class="utility-row">
+    <div class="utility-row" style="margin-bottom: 30px;"> <!-- Added extra safe margin -->
         <button class="btn-utility" onclick="clearOuts()">清除出局數 (Clear Out)</button>
     </div>
 
