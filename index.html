@@ -126,30 +126,55 @@
         /* Right side: Inning Display */
         .inning-container {
             display: flex;
-            flex-direction: row; /* Change to row for side-by-side */
+            flex-direction: row; 
             align-items: center;
             justify-content: center;
             background: #222;
-            padding: 10px 15px; /* Adjust padding */
+            padding: 5px 10px;
             border-radius: 12px;
-            min-width: 90px; /* Slightly wider */
+            min-width: 100px;
             border: 1px solid #444;
-            gap: 10px; /* Space between Number and Arrow */
+            gap: 10px; 
         }
+        
+        .inning-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .btn-inning {
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            width: 30px;
+            height: 25px;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+        }
+        .btn-inning:active { background: #555; }
+
         .inning-arrow {
             font-size: 2.5rem;
             line-height: 1;
             color: var(--accent-color);
             transition: transform 0.3s;
-            order: 2; /* Move to right */
+            order: 3; /* Arrow Last (Right) */
         }
         .inning-arrow.down { transform: rotate(180deg); }
         .inning-number {
             font-size: 3.5rem;
             font-weight: 800;
             line-height: 1;
-            order: 1; /* Move to left */
+            order: 2; /* Number Middle */
         }
+        
+        /* Order 1 is controls (Left) */
+
         .double-mode-indicator {
             font-size: 0.8rem;
             color: #ffeb3b;
@@ -352,6 +377,10 @@
         <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div class="inning-container">
+                    <div class="inning-controls" style="order: 0;">
+                        <button class="btn-inning" onclick="changeInning(1)">+</button>
+                        <button class="btn-inning" onclick="changeInning(-1)">-</button>
+                    </div>
                     <span class="inning-number" id="inning-number">1</span>
                     <span class="inning-arrow" id="inning-arrow">▲</span>
                 </div>
@@ -423,11 +452,7 @@
             
             // Inning Display
             elInningNum.textContent = inning;
-            // Fix: Arrow logic was correct but maybe class update failed?
-            // isTop = true -> '▲', class 'arrow'
-            // isTop = false -> '▲' (rotated), class 'arrow down'
-            // Wait, I changed class name in CSS to .inning-arrow
-            
+            // Arrow class
             elInningArrow.textContent = '▲'; 
             elInningArrow.className = isTop ? 'inning-arrow' : 'inning-arrow down';
             
@@ -523,6 +548,13 @@
                 inning++;
             }
             resetCount();
+        }
+        
+        // Manual Inning Control
+        function changeInning(delta) {
+            // Logic: Adjust inning number ONLY. Keep side as is.
+            inning = Math.max(1, inning + delta);
+            render();
         }
 
         function resetCount() {
