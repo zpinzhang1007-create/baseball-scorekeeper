@@ -161,7 +161,7 @@
             gap: 10px;
             padding: 10px;
             height: 25vh; 
-            margin-bottom: 5px; /* Reduced from 20px */
+            margin-bottom: 5px; 
         }
         .btn-main {
             border: none;
@@ -183,37 +183,42 @@
         .btn-strike { background-color: var(--strike-color); }
         .btn-out { background-color: var(--out-color); }
         
-        /* Utility Controls */
-        .utility-row {
-            display: flex;
-            justify-content: center;
-            padding: 0 10px 10px 10px;
-            gap: 10px;
-            margin-bottom: 5px; /* Reduced from 30px */
-        }
-        .btn-utility {
-            background: #333;
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 0.9rem;
-            flex: 1;
-        }
-
-        .reset-section {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 20px 60px 20px; /* Added 60px padding at bottom */
-            background: #000;
-            flex-wrap: wrap;
-            gap: 10px;
-            position: fixed; /* Fix to bottom */
+        /* Bottom Action Bar */
+        .bottom-actions {
+            position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            box-sizing: border-box; /* Ensure padding is inside width */
-            z-index: 10;
+            background-color: #000;
+            padding: 15px 15px 40px 15px; /* Top, Right, Bottom (extra safe area), Left */
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
+            gap: 10px;
+            box-sizing: border-box;
+            z-index: 100;
+            border-top: 1px solid #333;
+        }
+
+        .btn-action {
+            background: #222;
+            border: 1px solid #444;
+            color: #ccc;
+            padding: 12px 5px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            line-height: 1.2;
+            height: 50px; /* Fixed height for uniformity */
+        }
+        .btn-action:active { background: #333; }
+        
+        .btn-danger {
+            border-color: #d32f2f;
+            color: #ef5350;
         }
         
         /* Add spacer to prevent content from being hidden behind fixed footer */
@@ -353,15 +358,14 @@
         <button class="btn-main btn-out" onclick="addOut()">出局<br><span style="font-size:0.7rem">Out</span></button>
     </div>
     
-    <div class="utility-row" style="margin-bottom: 5px;"> 
-        <button class="btn-utility" onclick="clearOuts()">清除出局數 (Clear Out)</button>
-    </div>
-
+    <!-- Spacer to push content up -->
     <div class="footer-spacer"></div>
 
-    <div class="reset-section">
-        <button class="btn-text" onclick="resetCount()">重置球數 (New AB)</button>
-        <button class="btn-text" onclick="resetGame()" style="border-color: #d32f2f; color: #d32f2f;">新比賽 (New Game)</button>
+    <!-- Fixed Bottom Action Bar -->
+    <div class="bottom-actions">
+        <button class="btn-action" onclick="resetCount()">重置球數<br>(New AB)</button>
+        <button class="btn-action" onclick="clearOuts()">清除出局<br>(Clear Out)</button>
+        <button class="btn-action btn-danger" onclick="resetGame()">新比賽<br>(New Game)</button>
     </div>
 
     <script>
