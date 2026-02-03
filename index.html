@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⚾️ Lena's Scorekeeper</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --accent-color: #ff4081; /* Lena's pink */
+            --ball-color: #2196f3;
+            --strike-color: #ffeb3b;
+            --out-color: #f44336;
+            --panel-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation; /* Prevent double-tap zoom */
+        }
+
+        /* Header / Inning */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #000;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .inning-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--accent-color);
+        }
+        .arrow { font-size: 1.5rem; transition: transform 0.3s; }
+        .arrow.down { transform: rotate(180deg); }
+        .double-mode-indicator {
+            font-size: 0.8rem;
+            color: #ffeb3b;
+            border: 1px solid #ffeb3b;
+            padding: 2px 5px;
+            border-radius: 4px;
+            display: none; /* Hidden by default */
+        }
+
+        /* Scoreboard */
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            background-color: var(--panel-bg);
+            margin-bottom: 2px;
+        }
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 45%;
+        }
+        .team-name { font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px; }
+        .team-score { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+        .score-controls { display: flex; gap: 10px; margin-top: 5px; }
+        .btn-mini {
+            background: #333;
+            border: none;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .btn-mini:active { background: #555; }
+
+        /* B-S-O Display */
+        .count-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10px;
+            gap: 15px;
+        }
+        
+        .count-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .count-label {
+            font-size: 2rem;
+            font-weight: 900;
+            width: 40px;
+            text-align: center;
+        }
+        .indicators {
+            display: flex;
+            gap: 8px;
+        }
+        .dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #333;
+            transition: background-color 0.2s;
+        }
+
+        /* Active Dot Colors */
+        .dot.ball.active { background-color: var(--ball-color); box-shadow: 0 0 10px var(--ball-color); }
+        .dot.strike.active { background-color: var(--strike-color); box-shadow: 0 0 10px var(--strike-color); }
+        .dot.out.active { background-color: var(--out-color); box-shadow: 0 0 10px var(--out-color); }
+
+        /* Main Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+            height: 30vh;
+        }
+        .btn-main {
+            border: none;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-main:active { transform: scale(0.96); }
+
+        .btn-ball { background-color: var(--ball-color); }
+        .btn-strike { background-color: var(--strike-color); }
+        .btn-out { background-color: var(--out-color); }
+        
+        /* Utility Controls */
+        .utility-row {
+            display: flex;
+            justify-content: center;
+            padding: 0 10px 10px 10px;
+            gap: 10px;
+        }
+        .btn-utility {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            flex: 1;
+        }
+
+        .reset-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: #000;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn-text {
+            background: none;
+            border: 1px solid #444;
+            color: #888;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+        
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #aaa;
+            font-size: 0.8rem;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--accent-color); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header: Inning -->
+    <div class="header">
+        <div class="inning-indicator">
+            <span class="arrow" id="inning-arrow">▲</span>
+            <span id="inning-number">1</span>
+            <span id="double-mode-tag" class="double-mode-indicator">連打</span>
+        </div>
+        <div class="toggle-container">
+            <span>雙局制</span>
+            <label class="switch">
+                <input type="checkbox" id="doubleModeToggle" onchange="toggleDoubleMode()">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard">
+        <div class="team">
+            <div class="team-name">GUEST (客隊)</div>
+            <div class="team-score" id="score-guest">0</div>
+            <div class="score-controls">
+                <button class="btn-mini" onclick="updateScore('guest', -1)">-</button>
+                <button class="btn-mini" onclick="updateScore('guest', 1)">+</button>
+            </div>
+        </div>
+        <div class="team">
+            <div class="team-name">HOME (主隊)</div>
+            <div class="team-score" id="score-home">0</div>
+            <div class="score-controls">
+                <button class="btn-mini" onclick="updateScore('home', -1)">-</button>
+                <button class="btn-mini" onclick="updateScore('home', 1)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Count Display -->
+    <div class="count-panel">
+        <div class="count-row">
+            <div class="count-label" style="color:var(--ball-color)">B</div>
+            <div class="indicators">
+                <div class="dot ball" id="b1"></div>
+                <div class="dot ball" id="b2"></div>
+                <div class="dot ball" id="b3"></div>
+            </div>
+        </div>
+        <div class="count-row">
+            <div class="count-label" style="color:var(--strike-color)">S</div>
+            <div class="indicators">
+                <div class="dot strike" id="s1"></div>
+                <div class="dot strike" id="s2"></div>
+            </div>
+        </div>
+        <div class="count-row">
+            <div class="count-label" style="color:var(--out-color)">O</div>
+            <div class="indicators">
+                <div class="dot out" id="o1"></div>
+                <div class="dot out" id="o2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn-main btn-ball" onclick="addBall()">壞球<br><span style="font-size:0.8rem">Ball</span></button>
+        <button class="btn-main btn-strike" onclick="addStrike()">好球<br><span style="font-size:0.8rem">Strike</span></button>
+        <button class="btn-main btn-out" onclick="addOut()">出局<br><span style="font-size:0.8rem">Out</span></button>
+    </div>
+    
+    <div class="utility-row">
+        <button class="btn-utility" onclick="clearOuts()">清除出局數 (Clear Out)</button>
+    </div>
+
+    <div class="reset-section">
+        <button class="btn-text" onclick="resetCount()">重置球數 (New AB)</button>
+        <button class="btn-text" onclick="resetGame()" style="border-color: #d32f2f; color: #d32f2f;">新比賽 (New Game)</button>
+    </div>
+
+    <script>
+        // State
+        let balls = 0;
+        let strikes = 0;
+        let outs = 0;
+        let inning = 1;
+        let isTop = true; // true = Top(▲), false = Bottom(▼)
+        let scoreHome = 0;
+        let scoreGuest = 0;
+        
+        // Double Inning Mode State
+        let isDoubleMode = false;
+        let subInning = 0; // 0 = First set of outs, 1 = Second set of outs
+
+        // Elements
+        const elBalls = [document.getElementById('b1'), document.getElementById('b2'), document.getElementById('b3')];
+        const elStrikes = [document.getElementById('s1'), document.getElementById('s2')];
+        const elOuts = [document.getElementById('o1'), document.getElementById('o2')];
+        const elInningNum = document.getElementById('inning-number');
+        const elInningArrow = document.getElementById('inning-arrow');
+        const elScoreHome = document.getElementById('score-home');
+        const elScoreGuest = document.getElementById('score-guest');
+        const elDoubleTag = document.getElementById('double-mode-tag');
+
+        // Render Functions
+        function render() {
+            // Balls
+            elBalls.forEach((el, i) => el.classList.toggle('active', i < balls));
+            // Strikes
+            elStrikes.forEach((el, i) => el.classList.toggle('active', i < strikes));
+            // Outs
+            elOuts.forEach((el, i) => el.classList.toggle('active', i < outs));
+            
+            // Inning Display
+            elInningNum.textContent = inning;
+            elInningArrow.textContent = '▲';
+            elInningArrow.className = isTop ? 'arrow' : 'arrow down';
+            
+            // Double Mode Tag
+            if (isDoubleMode) {
+                elDoubleTag.style.display = 'inline-block';
+                elDoubleTag.textContent = subInning === 0 ? '連打 (1/2)' : '連打 (2/2)';
+            } else {
+                elDoubleTag.style.display = 'none';
+            }
+
+            // Scores
+            elScoreHome.textContent = scoreHome;
+            elScoreGuest.textContent = scoreGuest;
+        }
+
+        // Logic
+        function addBall() {
+            balls++;
+            if (balls >= 4) {
+                resetCount();
+            }
+            render();
+        }
+
+        function addStrike() {
+            strikes++;
+            if (strikes >= 3) {
+                addOut(); 
+                return;
+            }
+            render();
+        }
+
+        function addOut() {
+            outs++;
+            resetCount(); 
+            if (outs >= 3) {
+                handleThreeOuts();
+            }
+            render();
+        }
+        
+        function clearOuts() {
+            outs = 0;
+            render();
+        }
+
+        function handleThreeOuts() {
+            if (isDoubleMode) {
+                if (subInning === 0) {
+                    // First inning of the pair (e.g., 1st Inning Top -> 2nd Inning Top)
+                    inning++;
+                    subInning = 1;
+                    alert('雙局制：連打第二局，繼續進攻！(' + inning + '局)');
+                    outs = 0;
+                } else {
+                    // Second inning of the pair (e.g., 2nd Inning Top -> 1st Inning Bottom)
+                    subInning = 0;
+                    changeSideDoubleMode();
+                }
+            } else {
+                // Normal mode
+                changeSide();
+            }
+            render();
+        }
+
+        function changeSideDoubleMode() {
+            outs = 0;
+            if (isTop) {
+                // Was Top (e.g., 2 Top finished), Go to Bottom (1 Bottom)
+                isTop = false;
+                inning--; // Go back to the first inning of the pair
+                alert('雙局制：攻守交換！(回到 ' + inning + ' 局下)');
+            } else {
+                // Was Bottom (e.g., 2 Bottom finished), Go to Top (3 Top)
+                isTop = true;
+                inning++; // Go to next pair
+                alert('雙局制：攻守交換！(進入 ' + inning + ' 局上)');
+            }
+            resetCount();
+        }
+
+        function changeSide() {
+            outs = 0;
+            if (isTop) {
+                isTop = false; // Go to bottom
+            } else {
+                isTop = true; // Go to top
+                inning++;
+            }
+            resetCount();
+        }
+
+        function resetCount() {
+            balls = 0;
+            strikes = 0;
+            render();
+        }
+
+        function updateScore(team, delta) {
+            if (team === 'home') {
+                scoreHome = Math.max(0, scoreHome + delta);
+            } else {
+                scoreGuest = Math.max(0, scoreGuest + delta);
+            }
+            render();
+        }
+        
+        function toggleDoubleMode() {
+            const checkbox = document.getElementById('doubleModeToggle');
+            isDoubleMode = checkbox.checked;
+            subInning = 0; // Reset sub-inning state when toggling
+            render();
+        }
+
+        function resetGame() {
+            if(confirm('確定要開始新比賽嗎？所有紀錄將歸零。')) {
+                balls = 0; strikes = 0; outs = 0;
+                inning = 1; isTop = true;
+                scoreHome = 0; scoreGuest = 0;
+                subInning = 0;
+                render();
+            }
+        }
+
+        // Init
+        render();
+    </script>
+</body>
+</html>
