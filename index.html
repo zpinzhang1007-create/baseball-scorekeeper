@@ -130,10 +130,10 @@
             align-items: center;
             justify-content: center;
             background: #222;
-            padding: 5px 15px; /* Increased padding */
+            padding: 5px 15px;
             border-radius: 12px;
-            min-width: 160px; /* Increased width to 160px */
-            width: 160px; /* Explicit width */
+            min-width: 160px;
+            width: 160px;
             border: 1px solid #444;
             gap: 15px; 
         }
@@ -164,18 +164,18 @@
             line-height: 1;
             color: var(--accent-color);
             transition: transform 0.3s;
-            order: 3; /* Arrow Last (Right) */
-            /* Removed cursor: pointer to disable clicking */
+            order: 3; 
         }
         .inning-arrow.down { transform: rotate(180deg); }
         .inning-number {
             font-size: 3.5rem;
             font-weight: 800;
             line-height: 1;
-            order: 2; /* Number Middle */
-            width: 70px; /* Fixed width */
+            order: 2; 
+            width: 70px; 
             text-align: center;
             font-variant-numeric: tabular-nums;
+            margin-left: 0; 
         }
         
         .double-mode-indicator {
@@ -183,7 +183,7 @@
             color: #ffeb3b;
             margin-top: 5px;
             display: none;
-            width: 100%; /* Full width to sit below */
+            width: 100%;
             text-align: center;
         }
 
@@ -224,14 +224,13 @@
             left: 0;
             width: 100%;
             background-color: #000;
-            padding: 15px 15px 20px 15px; /* Reduced bottom padding from 40px to 20px */
+            padding: 15px 15px 20px 15px; 
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
+            grid-template-columns: 1fr 1fr 1fr; 
             gap: 10px;
             box-sizing: border-box;
-            z-index: 100;
+            z-index: 9999; /* Increased Z-Index to ensure clickability */
             border-top: 1px solid #333;
-            /* Removed transform to reset position (move up another 10%) */
         }
 
         .btn-action {
@@ -247,7 +246,7 @@
             align-items: center;
             text-align: center;
             line-height: 1.2;
-            height: 50px; /* Fixed height for uniformity */
+            height: 50px; 
         }
         .btn-action:active { background: #333; }
         
@@ -579,10 +578,10 @@
             render();
         }
         
-        // Manual Side Toggle
+        // Manual Side Toggle (Disabled)
         function toggleSideManual() {
-            isTop = !isTop;
-            render();
+            // isTop = !isTop;
+            // render();
         }
 
         function resetCount() {
