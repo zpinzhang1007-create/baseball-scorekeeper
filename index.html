@@ -229,7 +229,7 @@
             grid-template-columns: 1fr 1fr 1fr; 
             gap: 10px;
             box-sizing: border-box;
-            z-index: 9999; /* Increased Z-Index to ensure clickability */
+            z-index: 9999;
             border-top: 1px solid #333;
         }
 
@@ -411,6 +411,11 @@
     <!-- Spacer to push content up -->
     <div class="footer-spacer"></div>
 
+    <!-- Footer Credit -->
+    <div style="text-align: center; font-size: 0.7rem; color: #555; padding-bottom: 90px; margin-top: -30px; position: relative; z-index: 50;">
+        Made by ZPin
+    </div>
+
     <!-- Fixed Bottom Action Bar -->
     <div class="bottom-actions">
         <button class="btn-action" onclick="resetCount()">重置球數<br>(New AB)</button>
@@ -427,6 +432,7 @@
         let isTop = true; // true = Top(▲), false = Bottom(▼)
         let scoreHome = 0;
         let scoreGuest = 0;
+        const INNING_LIMIT = 99;
         
         // Double Inning Mode State
         let isDoubleMode = false;
@@ -507,11 +513,17 @@
             render();
         }
 
+        function safeIncrementInning() {
+            if (inning < INNING_LIMIT) {
+                inning++;
+            }
+        }
+
         function handleThreeOuts() {
             if (isDoubleMode) {
                 if (subInning === 0) {
                     // First inning of the pair (e.g., 1st Inning Top -> 2nd Inning Top)
-                    inning++;
+                    safeIncrementInning();
                     subInning = 1;
                     // Removed alert
                     outs = 0;
@@ -537,7 +549,7 @@
             } else {
                 // Was Bottom (e.g., 2 Bottom finished), Go to Top (3 Top)
                 isTop = true;
-                inning++; // Go to next pair
+                safeIncrementInning(); // Go to next pair
                 // Removed alert
             }
             resetCount();
@@ -549,7 +561,7 @@
                 isTop = false; // Go to bottom
             } else {
                 isTop = true; // Go to top
-                inning++;
+                safeIncrementInning();
             }
             resetCount();
         }
@@ -561,41 +573,45 @@
                 if (delta === 1) {
                     // Next
                     if (subInning === 0) {
-                        // 1st part -> 2nd part (e.g. 1 Top -> 2 Top)
-                        inning++;
-                        subInning = 1;
+                        // 1st part -> 2nd part
+                        if (inning < INNING_LIMIT) {
+                            inning++;
+                            subInning = 1;
+                        }
                     } else {
-                        // 2nd part -> Switch Side (e.g. 2 Top -> 1 Bottom)
+                        // 2nd part -> Switch Side
                         subInning = 0;
                         if (isTop) {
                             isTop = false;
                             inning--; 
                         } else {
-                            isTop = true;
-                            inning++;
+                            if (inning < INNING_LIMIT) {
+                                isTop = true;
+                                inning++;
+                            }
                         }
                     }
                 } else {
                     // Prev
                     if (subInning === 1) {
-                        // 2nd part -> 1st part (e.g. 2 Top -> 1 Top)
+                        // 2nd part -> 1st part
                         inning--;
                         subInning = 0;
                     } else {
-                        // 1st part -> Prev Side 2nd part (e.g. 1 Bottom -> 2 Top)
+                        // 1st part -> Prev Side 2nd part
                         if (!isTop) {
-                            subInning = 1;
-                            isTop = true;
-                            inning++;
+                            if (inning < INNING_LIMIT) { // Technically safe, but consistent logic
+                                subInning = 1;
+                                isTop = true;
+                                inning++;
+                            }
                         } else {
                             if (inning > 1) {
                                 subInning = 1;
                                 isTop = false;
                                 inning--;
                             } else {
-                                // Already at 1 Top (Start of game), do nothing
-                                // Keep subInning at 0, don't go below 1
-                                subInning = 0;
+                                subInning = 0; // Already at 1 Top
                             }
                         }
                     }
@@ -606,8 +622,10 @@
                     if (isTop) {
                         isTop = false; 
                     } else {
-                        isTop = true;  
-                        inning++;      
+                        if (inning < INNING_LIMIT) {
+                            isTop = true;  
+                            inning++;      
+                        }
                     }
                 } else if (delta === -1) {
                     if (!isTop) {
@@ -623,7 +641,6 @@
             render();
         }
         
-        // Manual Side Toggle (Disabled)
         function toggleSideManual() {
             // isTop = !isTop;
             // render();
