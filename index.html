@@ -28,35 +28,19 @@
             touch-action: manipulation; /* Prevent double-tap zoom */
         }
 
-        /* Header / Inning */
+        /* Header / Settings */
         .header {
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* Center the toggles */
             align-items: center;
             padding: 10px 15px;
             background-color: #000;
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 0.9rem;
+            min-height: 40px;
         }
         .header-controls {
             display: flex;
-            gap: 15px;
-        }
-        .inning-indicator {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--accent-color);
-        }
-        .arrow { font-size: 1.5rem; transition: transform 0.3s; }
-        .arrow.down { transform: rotate(180deg); }
-        .double-mode-indicator {
-            font-size: 0.8rem;
-            color: #ffeb3b;
-            border: 1px solid #ffeb3b;
-            padding: 2px 5px;
-            border-radius: 4px;
-            display: none; /* Hidden by default */
+            gap: 20px;
         }
 
         /* Scoreboard */
@@ -96,16 +80,23 @@
         }
         .btn-mini:active { background: #555; }
 
-        /* B-S-O Display */
+        /* B-S-O Panel Container */
         .count-panel {
             flex: 1;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 5px 10px; /* Reduced padding */
-            gap: 5px; /* Reduced gap */
+            flex-direction: row; /* Horizontal layout */
+            align-items: center;
+            justify-content: space-between; /* Space between BSO and Inning */
+            padding: 10px 20px;
+            gap: 10px;
         }
-        
+
+        /* Left side: BSO Lights */
+        .bso-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
         .count-row {
             display: flex;
             align-items: center;
@@ -128,11 +119,40 @@
             background-color: #333;
             transition: background-color 0.2s;
         }
-
-        /* Active Dot Colors */
         .dot.ball.active { background-color: var(--ball-color); box-shadow: 0 0 10px var(--ball-color); }
         .dot.strike.active { background-color: var(--strike-color); box-shadow: 0 0 10px var(--strike-color); }
         .dot.out.active { background-color: var(--out-color); box-shadow: 0 0 10px var(--out-color); }
+
+        /* Right side: Inning Display */
+        .inning-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #222;
+            padding: 15px;
+            border-radius: 12px;
+            min-width: 80px;
+            border: 1px solid #444;
+        }
+        .inning-arrow {
+            font-size: 2.5rem;
+            line-height: 1;
+            color: var(--accent-color);
+            transition: transform 0.3s;
+        }
+        .inning-arrow.down { transform: rotate(180deg); }
+        .inning-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .double-mode-indicator {
+            font-size: 0.8rem;
+            color: #ffeb3b;
+            margin-top: 5px;
+            display: none;
+        }
 
         /* Main Controls */
         .controls {
@@ -140,13 +160,13 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             padding: 10px;
-            height: 25vh; /* Reduced height from 30vh */
-            margin-bottom: 20px; /* Add margin at bottom to avoid Safari bar overlap */
+            height: 25vh; 
+            margin-bottom: 20px; 
         }
         .btn-main {
             border: none;
             border-radius: 12px;
-            font-size: 1.3rem; /* Slightly smaller font */
+            font-size: 1.3rem; 
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.1s, opacity 0.2s;
@@ -155,7 +175,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 10px 0; /* Adjust padding */
+            padding: 10px 0; 
         }
         .btn-main:active { transform: scale(0.96); }
 
@@ -169,6 +189,7 @@
             justify-content: center;
             padding: 0 10px 10px 10px;
             gap: 10px;
+            margin-bottom: 30px; /* Safe margin */
         }
         .btn-utility {
             background: #333;
@@ -238,13 +259,8 @@
 </head>
 <body>
 
-    <!-- Header: Inning -->
+    <!-- Header: Settings Only -->
     <div class="header">
-        <div class="inning-indicator">
-            <span class="arrow" id="inning-arrow">▲</span>
-            <span id="inning-number">1</span>
-            <span id="double-mode-tag" class="double-mode-indicator">連打</span>
-        </div>
         <div class="header-controls">
             <div class="toggle-container">
                 <span>壘球制</span>
@@ -283,29 +299,39 @@
         </div>
     </div>
 
-    <!-- Count Display -->
+    <!-- Count Panel: BSO (Left) + Inning (Right) -->
     <div class="count-panel">
-        <div class="count-row">
-            <div class="count-label" style="color:var(--ball-color)">B</div>
-            <div class="indicators">
-                <div class="dot ball" id="b1"></div>
-                <div class="dot ball" id="b2"></div>
-                <div class="dot ball" id="b3"></div>
+        <!-- Left: BSO -->
+        <div class="bso-container">
+            <div class="count-row">
+                <div class="count-label" style="color:var(--ball-color)">B</div>
+                <div class="indicators">
+                    <div class="dot ball" id="b1"></div>
+                    <div class="dot ball" id="b2"></div>
+                    <div class="dot ball" id="b3"></div>
+                </div>
+            </div>
+            <div class="count-row">
+                <div class="count-label" style="color:var(--strike-color)">S</div>
+                <div class="indicators">
+                    <div class="dot strike" id="s1"></div>
+                    <div class="dot strike" id="s2"></div>
+                </div>
+            </div>
+            <div class="count-row">
+                <div class="count-label" style="color:var(--out-color)">O</div>
+                <div class="indicators">
+                    <div class="dot out" id="o1"></div>
+                    <div class="dot out" id="o2"></div>
+                </div>
             </div>
         </div>
-        <div class="count-row">
-            <div class="count-label" style="color:var(--strike-color)">S</div>
-            <div class="indicators">
-                <div class="dot strike" id="s1"></div>
-                <div class="dot strike" id="s2"></div>
-            </div>
-        </div>
-        <div class="count-row">
-            <div class="count-label" style="color:var(--out-color)">O</div>
-            <div class="indicators">
-                <div class="dot out" id="o1"></div>
-                <div class="dot out" id="o2"></div>
-            </div>
+
+        <!-- Right: Inning -->
+        <div class="inning-container">
+            <span class="inning-arrow" id="inning-arrow">▲</span>
+            <span class="inning-number" id="inning-number">1</span>
+            <span id="double-mode-tag" class="double-mode-indicator">連打</span>
         </div>
     </div>
 
@@ -383,7 +409,9 @@
         function addBall() {
             balls++;
             if (balls >= 4) {
+                // Walk
                 resetCount();
+                // Optionally show toast: "Walk!"
             }
             render();
         }
@@ -391,8 +419,9 @@
         function addStrike() {
             strikes++;
             if (strikes >= 3) {
+                // Strikeout
                 addOut(); 
-                return;
+                return; 
             }
             render();
         }
