@@ -484,7 +484,7 @@
                     // First inning of the pair (e.g., 1st Inning Top -> 2nd Inning Top)
                     inning++;
                     subInning = 1;
-                    alert('雙局制：連打第二局，繼續進攻！(' + inning + '局)');
+                    // Removed alert
                     outs = 0;
                 } else {
                     // Second inning of the pair (e.g., 2nd Inning Top -> 1st Inning Bottom)
@@ -504,12 +504,12 @@
                 // Was Top (e.g., 2 Top finished), Go to Bottom (1 Bottom)
                 isTop = false;
                 inning--; // Go back to the first inning of the pair
-                alert('雙局制：攻守交換！(回到 ' + inning + ' 局下)');
+                // Removed alert
             } else {
                 // Was Bottom (e.g., 2 Bottom finished), Go to Top (3 Top)
                 isTop = true;
                 inning++; // Go to next pair
-                alert('雙局制：攻守交換！(進入 ' + inning + ' 局上)');
+                // Removed alert
             }
             resetCount();
         }
