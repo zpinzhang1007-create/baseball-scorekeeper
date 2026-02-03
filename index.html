@@ -126,32 +126,37 @@
         /* Right side: Inning Display */
         .inning-container {
             display: flex;
-            flex-direction: column;
+            flex-direction: row; /* Change to row for side-by-side */
             align-items: center;
             justify-content: center;
             background: #222;
-            padding: 15px;
+            padding: 10px 15px; /* Adjust padding */
             border-radius: 12px;
-            min-width: 80px;
+            min-width: 90px; /* Slightly wider */
             border: 1px solid #444;
+            gap: 10px; /* Space between Number and Arrow */
         }
         .inning-arrow {
             font-size: 2.5rem;
             line-height: 1;
             color: var(--accent-color);
             transition: transform 0.3s;
+            order: 2; /* Move to right */
         }
         .inning-arrow.down { transform: rotate(180deg); }
         .inning-number {
             font-size: 3.5rem;
             font-weight: 800;
             line-height: 1;
+            order: 1; /* Move to left */
         }
         .double-mode-indicator {
             font-size: 0.8rem;
             color: #ffeb3b;
             margin-top: 5px;
             display: none;
+            width: 100%; /* Full width to sit below */
+            text-align: center;
         }
 
         /* Main Controls */
@@ -345,9 +350,11 @@
 
         <!-- Right: Inning & Sponsor -->
         <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
-            <div class="inning-container">
-                <span class="inning-arrow" id="inning-arrow">▲</span>
-                <span class="inning-number" id="inning-number">1</span>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div class="inning-container">
+                    <span class="inning-number" id="inning-number">1</span>
+                    <span class="inning-arrow" id="inning-arrow">▲</span>
+                </div>
                 <span id="double-mode-tag" class="double-mode-indicator">連打</span>
             </div>
             
@@ -416,8 +423,13 @@
             
             // Inning Display
             elInningNum.textContent = inning;
-            elInningArrow.textContent = '▲';
-            elInningArrow.className = isTop ? 'arrow' : 'arrow down';
+            // Fix: Arrow logic was correct but maybe class update failed?
+            // isTop = true -> '▲', class 'arrow'
+            // isTop = false -> '▲' (rotated), class 'arrow down'
+            // Wait, I changed class name in CSS to .inning-arrow
+            
+            elInningArrow.textContent = '▲'; 
+            elInningArrow.className = isTop ? 'inning-arrow' : 'inning-arrow down';
             
             // Double Mode Tag
             if (isDoubleMode) {
