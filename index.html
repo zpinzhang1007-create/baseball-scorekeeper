@@ -38,6 +38,10 @@
             font-size: 1.2rem;
             font-weight: bold;
         }
+        .header-controls {
+            display: flex;
+            gap: 15px;
+        }
         .inning-indicator {
             display: flex;
             align-items: center;
@@ -239,12 +243,21 @@
             <span id="inning-number">1</span>
             <span id="double-mode-tag" class="double-mode-indicator">連打</span>
         </div>
-        <div class="toggle-container">
-            <span>雙局制</span>
-            <label class="switch">
-                <input type="checkbox" id="doubleModeToggle" onchange="toggleDoubleMode()">
-                <span class="slider"></span>
-            </label>
+        <div class="header-controls">
+            <div class="toggle-container">
+                <span>壘球制</span>
+                <label class="switch">
+                    <input type="checkbox" id="softballModeToggle" onchange="toggleSoftballMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-container">
+                <span>雙局制</span>
+                <label class="switch">
+                    <input type="checkbox" id="doubleModeToggle" onchange="toggleDoubleMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
     </div>
 
@@ -323,6 +336,9 @@
         // Double Inning Mode State
         let isDoubleMode = false;
         let subInning = 0; // 0 = First set of outs, 1 = Second set of outs
+
+        // Softball Mode State
+        let isSoftballMode = false;
 
         // Elements
         const elBalls = [document.getElementById('b1'), document.getElementById('b2'), document.getElementById('b3')];
@@ -441,8 +457,13 @@
         }
 
         function resetCount() {
-            balls = 0;
-            strikes = 0;
+            if (isSoftballMode) {
+                balls = 1;
+                strikes = 1;
+            } else {
+                balls = 0;
+                strikes = 0;
+            }
             render();
         }
 
@@ -462,13 +483,22 @@
             render();
         }
 
+        function toggleSoftballMode() {
+            const checkbox = document.getElementById('softballModeToggle');
+            isSoftballMode = checkbox.checked;
+            resetCount(); // Apply new count rules immediately
+        }
+
         function resetGame() {
             if(confirm('確定要開始新比賽嗎？所有紀錄將歸零。')) {
-                balls = 0; strikes = 0; outs = 0;
+                // Reset basic game state
+                outs = 0;
                 inning = 1; isTop = true;
                 scoreHome = 0; scoreGuest = 0;
                 subInning = 0;
-                render();
+                
+                // Reset count based on current mode
+                resetCount();
             }
         }
 
