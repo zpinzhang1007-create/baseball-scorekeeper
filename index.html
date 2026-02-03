@@ -132,16 +132,30 @@
             background: #222;
             padding: 5px 10px;
             border-radius: 12px;
-            min-width: 120px; /* Fixed width */
-            width: 120px; /* Explicit width */
+            min-width: 140px; /* Increased to accommodate double digits */
+            width: 140px; /* Explicit width */
             border: 1px solid #444;
-            gap: 10px; 
+            gap: 15px; /* Increased gap */
         }
         
         .inning-controls {
             display: flex;
             flex-direction: column;
             gap: 5px;
+            margin-right: 5px; /* Shift controls slightly left by pushing margin */
+        }
+
+        /* ... btn-inning ... */
+
+        .inning-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            order: 2; 
+            width: 70px; /* Increased for double digits (was 50px) */
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            margin-left: -5px; /* Pull number slightly left */
         }
         .btn-inning {
             background: #333;
@@ -173,9 +187,10 @@
             font-weight: 800;
             line-height: 1;
             order: 2; /* Number Middle */
-            width: 50px; /* Fixed width */
+            width: 70px; /* Width for double digits */
             text-align: center;
             font-variant-numeric: tabular-nums;
+            margin-left: -5px; /* Slight left pull */
         }
         
         .double-mode-indicator {
