@@ -132,45 +132,20 @@
             background: #222;
             padding: 5px 10px;
             border-radius: 12px;
-            min-width: 100px;
+            min-width: 120px; /* Increased and fixed width */
+            width: 120px; /* Explicit width */
             border: 1px solid #444;
             gap: 10px; 
         }
         
-        .inning-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .btn-inning {
-            background: #333;
-            border: 1px solid #555;
-            color: #fff;
-            width: 30px;
-            height: 25px;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            line-height: 1;
-        }
-        .btn-inning:active { background: #555; }
-
-        .inning-arrow {
-            font-size: 2.5rem;
-            line-height: 1;
-            color: var(--accent-color);
-            transition: transform 0.3s;
-            order: 3; /* Arrow Last (Right) */
-        }
-        .inning-arrow.down { transform: rotate(180deg); }
         .inning-number {
             font-size: 3.5rem;
             font-weight: 800;
             line-height: 1;
-            order: 2; /* Number Middle */
+            order: 2; 
+            width: 50px; /* Fixed width for number */
+            text-align: center; /* Center the number */
+            font-variant-numeric: tabular-nums; /* Monospaced numbers */
         }
         
         /* Order 1 is controls (Left) */
