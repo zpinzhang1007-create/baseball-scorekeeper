@@ -426,9 +426,8 @@
         function addBall() {
             balls++;
             if (balls >= 4) {
-                // Walk
+                // Walk - Reset balls and strikes, keep outs
                 resetCount();
-                // Optionally show toast: "Walk!"
             }
             render();
         }
