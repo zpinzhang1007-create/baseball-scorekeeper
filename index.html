@@ -343,11 +343,18 @@
             </div>
         </div>
 
-        <!-- Right: Inning -->
-        <div class="inning-container">
-            <span class="inning-arrow" id="inning-arrow">▲</span>
-            <span class="inning-number" id="inning-number">1</span>
-            <span id="double-mode-tag" class="double-mode-indicator">連打</span>
+        <!-- Right: Inning & Sponsor -->
+        <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+            <div class="inning-container">
+                <span class="inning-arrow" id="inning-arrow">▲</span>
+                <span class="inning-number" id="inning-number">1</span>
+                <span id="double-mode-tag" class="double-mode-indicator">連打</span>
+            </div>
+            
+            <!-- Buy Me a Coffee (Moved Here) -->
+            <a href="https://buymeacoffee.com/zpin" target="_blank">
+                <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 35px !important; width: auto !important; border-radius: 5px;">
+            </a>
         </div>
     </div>
 
@@ -369,24 +376,9 @@
     </div>
     
     <!-- Buy Me a Coffee Button (Fixed Bottom-Right) -->
-    <a href="https://buymeacoffee.com/zpin" target="_blank" class="bmc-button">
-        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important; width: 145px !important;" >
-    </a>
+    <!-- Removed Fixed Button -->
 
     <style>
-        .bmc-button {
-            position: fixed;
-            bottom: 100px; /* Above the bottom action bar */
-            right: 15px;
-            z-index: 999;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            border-radius: 5px;
-        }
-        .bmc-button:active {
-            transform: scale(0.95);
-        }
-    </style>
 
     <script>
         // State
