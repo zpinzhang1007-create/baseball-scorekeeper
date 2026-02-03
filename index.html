@@ -554,24 +554,65 @@
             resetCount();
         }
         
-        // Manual Inning Control (Half-Inning Steps)
+        // Manual Inning Control
         function changeInning(delta) {
-            if (delta === 1) {
-                // Next Half-Inning
-                if (isTop) {
-                    isTop = false; // Top -> Bottom
+            if (isDoubleMode) {
+                // Double Inning Logic
+                if (delta === 1) {
+                    // Next
+                    if (subInning === 0) {
+                        // 1st part -> 2nd part (e.g. 1 Top -> 2 Top)
+                        inning++;
+                        subInning = 1;
+                    } else {
+                        // 2nd part -> Switch Side (e.g. 2 Top -> 1 Bottom)
+                        subInning = 0;
+                        if (isTop) {
+                            isTop = false;
+                            inning--; 
+                        } else {
+                            isTop = true;
+                            inning++;
+                        }
+                    }
                 } else {
-                    isTop = true;  // Bottom -> Top
-                    inning++;      // Next Inning
-                }
-            } else if (delta === -1) {
-                // Prev Half-Inning
-                if (!isTop) {
-                    isTop = true;  // Bottom -> Top
-                } else {
-                    if (inning > 1) {
-                        isTop = false; // Top -> Bottom (of prev inning)
+                    // Prev
+                    if (subInning === 1) {
+                        // 2nd part -> 1st part (e.g. 2 Top -> 1 Top)
                         inning--;
+                        subInning = 0;
+                    } else {
+                        // 1st part -> Prev Side 2nd part (e.g. 1 Bottom -> 2 Top)
+                        if (!isTop) {
+                            subInning = 1;
+                            isTop = true;
+                            inning++;
+                        } else {
+                            if (inning > 1) {
+                                subInning = 1;
+                                isTop = false;
+                                inning--;
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Standard Logic
+                if (delta === 1) {
+                    if (isTop) {
+                        isTop = false; 
+                    } else {
+                        isTop = true;  
+                        inning++;      
+                    }
+                } else if (delta === -1) {
+                    if (!isTop) {
+                        isTop = true;  
+                    } else {
+                        if (inning > 1) {
+                            isTop = false; 
+                            inning--;
+                        }
                     }
                 }
             }
