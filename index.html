@@ -592,6 +592,10 @@
                                 subInning = 1;
                                 isTop = false;
                                 inning--;
+                            } else {
+                                // Already at 1 Top (Start of game), do nothing
+                                // Keep subInning at 0, don't go below 1
+                                subInning = 0;
                             }
                         }
                     }
