@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>⚾️ Scorekeeper</title>
+    <title>⚾️ Scorekeeper (Test)</title>
     
     <!-- Open Graph Metadata for Social Sharing -->
     <meta property="og:title" content="⚾️ Scorekeeper">
@@ -48,7 +48,11 @@
         }
         .header-controls {
             display: flex;
-            gap: 20px;
+            gap: 10px; /* Reduced from 20px */
+            align-items: center;
+            flex-wrap: nowrap; /* Prevent wrapping */
+            width: 100%;
+            justify-content: center;
         }
 
         /* Scoreboard */
@@ -280,15 +284,15 @@
         .toggle-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 5px; /* Reduced from 10px */
             color: #aaa;
-            font-size: 0.8rem;
+            font-size: 0.75rem; /* Reduced from 0.8rem */
         }
         .switch {
             position: relative;
             display: inline-block;
-            width: 40px;
-            height: 20px;
+            width: 36px; /* Reduced from 40px */
+            height: 18px; /* Reduced from 20px */
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
@@ -302,8 +306,8 @@
         .slider:before {
             position: absolute;
             content: "";
-            height: 14px;
-            width: 14px;
+            height: 12px; /* Reduced from 14px */
+            width: 12px; /* Reduced from 14px */
             left: 3px;
             bottom: 3px;
             background-color: white;
@@ -311,7 +315,59 @@
             border-radius: 50%;
         }
         input:checked + .slider { background-color: var(--accent-color); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(18px); /* Adjusted */ }
+        
+        /* Timer Styles */
+        .timer-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+        .timer-container {
+            display: flex;
+            align-items: center;
+            padding: 2px 8px; /* Reduced padding */
+            background-color: #222;
+            border-radius: 8px;
+            border: 1px solid #444;
+            gap: 5px; /* Reduced gap */
+        }
+        .timer-number {
+            font-size: 1.1rem; /* Slightly reduced */
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            width: 22px; /* Reduced width */
+            text-align: center;
+            color: #fff;
+            transition: color 0.3s;
+        }
+        .timer-number.running {
+            color: var(--ball-color); /* Green when running */
+            text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        .timer-number.red {
+            color: #f44336;
+        }
+        .btn-timer {
+            background: none;
+            border: 1px solid #555;
+            color: #aaa;
+            width: 30px; /* Increased from 20px */
+            height: 30px; /* Increased from 20px */
+            border-radius: 50%;
+            font-size: 0.9rem; /* Increased font */
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+            padding: 0;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .btn-timer:active { background: #444; color: #fff; }
+        .btn-timer:disabled { opacity: 0.3; cursor: not-allowed; }
 
     </style>
 </head>
@@ -333,6 +389,16 @@
                     <input type="checkbox" id="doubleModeToggle" onchange="toggleDoubleMode()">
                     <span class="slider"></span>
                 </label>
+            </div>
+            
+            <!-- Timer (Added to the right of Double Mode) -->
+            <div class="timer-wrapper">
+                <span>計時</span>
+                <div class="timer-container">
+                    <button class="btn-timer" id="btn-timer-start" onclick="startTimer()">▶</button>
+                    <span id="timer-display" class="timer-number">00</span>
+                    <button class="btn-timer" onclick="resetTimer()">↻</button>
+                </div>
             </div>
         </div>
     </div>
@@ -446,6 +512,10 @@
 
         // Softball Mode State
         let isSoftballMode = false;
+        
+        // Timer State
+        let timerInterval = null;
+        let timerMinutes = 0;
 
         // Elements
         const elBalls = [document.getElementById('b1'), document.getElementById('b2'), document.getElementById('b3')];
@@ -456,6 +526,8 @@
         const elScoreHome = document.getElementById('score-home');
         const elScoreGuest = document.getElementById('score-guest');
         const elDoubleTag = document.getElementById('double-mode-tag');
+        const elTimerDisplay = document.getElementById('timer-display');
+        const elBtnTimerStart = document.getElementById('btn-timer-start');
 
         // Render Functions
         function render() {
@@ -684,6 +756,45 @@
             isSoftballMode = checkbox.checked;
             resetCount(); // Apply new count rules immediately
         }
+        
+        // Timer Logic
+        function startTimer() {
+            if (timerInterval) return; // Already running
+            if (timerMinutes >= 99) return; // Limit reached
+            
+            // Visual feedback immediately
+            elTimerDisplay.classList.add('running');
+            elBtnTimerStart.disabled = true; // Disable start button while running
+            
+            timerInterval = setInterval(() => {
+                timerMinutes++;
+                if (timerMinutes > 99) {
+                    // Cap at 99 and stop
+                    timerMinutes = 99; // Or keep 99
+                    stopTimer();
+                    elTimerDisplay.classList.add('red');
+                }
+                updateTimerDisplay();
+            }, 60000); // 1 minute
+        }
+        
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            elTimerDisplay.classList.remove('running');
+            elBtnTimerStart.disabled = false;
+        }
+        
+        function resetTimer() {
+            stopTimer();
+            timerMinutes = 0;
+            elTimerDisplay.classList.remove('red');
+            updateTimerDisplay();
+        }
+        
+        function updateTimerDisplay() {
+            elTimerDisplay.textContent = String(timerMinutes).padStart(2, '0');
+        }
 
         function resetGame() {
             if(confirm('確定要開始新比賽嗎？所有紀錄將歸零。')) {
@@ -692,6 +803,9 @@
                 inning = 1; isTop = true;
                 scoreHome = 0; scoreGuest = 0;
                 subInning = 0;
+                
+                // Reset timer
+                resetTimer();
                 
                 // Reset count based on current mode
                 resetCount();
