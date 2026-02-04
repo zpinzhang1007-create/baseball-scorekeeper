@@ -48,8 +48,11 @@
         }
         .header-controls {
             display: flex;
-            gap: 20px;
+            gap: 10px; /* Reduced from 20px */
             align-items: center;
+            flex-wrap: nowrap; /* Prevent wrapping */
+            width: 100%;
+            justify-content: center;
         }
 
         /* Scoreboard */
@@ -281,15 +284,15 @@
         .toggle-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 5px; /* Reduced from 10px */
             color: #aaa;
-            font-size: 0.8rem;
+            font-size: 0.75rem; /* Reduced from 0.8rem */
         }
         .switch {
             position: relative;
             display: inline-block;
-            width: 40px;
-            height: 20px;
+            width: 36px; /* Reduced from 40px */
+            height: 18px; /* Reduced from 20px */
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
@@ -303,8 +306,8 @@
         .slider:before {
             position: absolute;
             content: "";
-            height: 14px;
-            width: 14px;
+            height: 12px; /* Reduced from 14px */
+            width: 12px; /* Reduced from 14px */
             left: 3px;
             bottom: 3px;
             background-color: white;
@@ -312,23 +315,30 @@
             border-radius: 50%;
         }
         input:checked + .slider { background-color: var(--accent-color); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(18px); /* Adjusted */ }
         
         /* Timer Styles */
+        .timer-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: #aaa;
+        }
         .timer-container {
             display: flex;
             align-items: center;
-            padding: 2px 10px;
+            padding: 2px 8px; /* Reduced padding */
             background-color: #222;
             border-radius: 8px;
             border: 1px solid #444;
-            gap: 8px;
+            gap: 5px; /* Reduced gap */
         }
         .timer-number {
-            font-size: 1.2rem;
+            font-size: 1.1rem; /* Slightly reduced */
             font-weight: 800;
             font-variant-numeric: tabular-nums;
-            width: 25px;
+            width: 22px; /* Reduced width */
             text-align: center;
             color: #fff;
             transition: color 0.3s;
@@ -382,11 +392,13 @@
             </div>
             
             <!-- Timer (Added to the right of Double Mode) -->
-            <div class="timer-container">
-                <span style="font-size: 0.8rem; color: #aaa; margin-right: 2px;">計時</span>
-                <button class="btn-timer" id="btn-timer-start" onclick="startTimer()">▶</button>
-                <span id="timer-display" class="timer-number">00</span>
-                <button class="btn-timer" onclick="resetTimer()">↻</button>
+            <div class="timer-wrapper">
+                <span>計時</span>
+                <div class="timer-container">
+                    <button class="btn-timer" id="btn-timer-start" onclick="startTimer()">▶</button>
+                    <span id="timer-display" class="timer-number">00</span>
+                    <button class="btn-timer" onclick="resetTimer()">↻</button>
+                </div>
             </div>
         </div>
     </div>
