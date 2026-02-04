@@ -515,7 +515,6 @@
         
         // Timer State
         let timerInterval = null;
-        let timerMinutes = 0;
 
         // Elements
         const elBalls = [document.getElementById('b1'), document.getElementById('b2'), document.getElementById('b3')];
@@ -757,43 +756,83 @@
             resetCount(); // Apply new count rules immediately
         }
         
-        // Timer Logic
+        // Timer Logic (Timestamp based)
+        function getTimerStart() {
+            return parseInt(localStorage.getItem('scorekeeper_timer_start') || '0');
+        }
+
+        function setTimerStart(ts) {
+            localStorage.setItem('scorekeeper_timer_start', ts);
+        }
+
+        function clearTimerStart() {
+            localStorage.removeItem('scorekeeper_timer_start');
+        }
+
+        function updateTimer() {
+            const start = getTimerStart();
+            if (!start) return;
+
+            const now = Date.now();
+            const diffMs = now - start;
+            const minutes = Math.floor(diffMs / 60000); // 60000 ms = 1 min
+
+            if (minutes > 99) {
+                // Limit reached
+                elTimerDisplay.textContent = '99';
+                elTimerDisplay.classList.add('red');
+                elTimerDisplay.classList.remove('running');
+                // Don't stop interval, keep checking (or stop visual update)
+                return;
+            }
+
+            elTimerDisplay.textContent = String(minutes).padStart(2, '0');
+        }
+
         function startTimer() {
-            if (timerInterval) return; // Already running
-            if (timerMinutes >= 99) return; // Limit reached
+            if (timerInterval) return; // Already running logic check
             
-            // Visual feedback immediately
+            let start = getTimerStart();
+            
+            // If no start time stored, set it now
+            if (!start) {
+                start = Date.now();
+                setTimerStart(start);
+            }
+            
+            // Check if already over limit
+            const minutes = Math.floor((Date.now() - start) / 60000);
+            if (minutes > 99) {
+                elTimerDisplay.textContent = '99';
+                elTimerDisplay.classList.add('red');
+                return;
+            }
+
+            // UI State
             elTimerDisplay.classList.add('running');
-            elBtnTimerStart.disabled = true; // Disable start button while running
+            elBtnTimerStart.disabled = true;
             
-            timerInterval = setInterval(() => {
-                timerMinutes++;
-                if (timerMinutes > 99) {
-                    // Cap at 99 and stop
-                    timerMinutes = 99; // Or keep 99
-                    stopTimer();
-                    elTimerDisplay.classList.add('red');
-                }
-                updateTimerDisplay();
-            }, 60000); // 1 minute
+            // Run immediately
+            updateTimer();
+            
+            // Check every second (1000ms) to update display accurately when minute changes
+            timerInterval = setInterval(updateTimer, 1000);
         }
         
         function stopTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
             elTimerDisplay.classList.remove('running');
             elBtnTimerStart.disabled = false;
         }
         
         function resetTimer() {
             stopTimer();
-            timerMinutes = 0;
+            clearTimerStart();
+            elTimerDisplay.textContent = '00';
             elTimerDisplay.classList.remove('red');
-            updateTimerDisplay();
-        }
-        
-        function updateTimerDisplay() {
-            elTimerDisplay.textContent = String(timerMinutes).padStart(2, '0');
         }
 
         function resetGame() {
@@ -814,6 +853,11 @@
 
         // Init
         render();
+        
+        // Resume timer if active
+        if (getTimerStart()) {
+            startTimer();
+        }
     </script>
 </body>
 </html>
