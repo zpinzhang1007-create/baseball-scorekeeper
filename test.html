@@ -331,6 +331,11 @@
             width: 25px;
             text-align: center;
             color: #fff;
+            transition: color 0.3s;
+        }
+        .timer-number.running {
+            color: var(--ball-color); /* Green when running */
+            text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
         }
         .timer-number.red {
             color: #f44336;
@@ -339,18 +344,20 @@
             background: none;
             border: 1px solid #555;
             color: #aaa;
-            width: 20px;
-            height: 20px;
+            width: 30px; /* Increased from 20px */
+            height: 30px; /* Increased from 20px */
             border-radius: 50%;
-            font-size: 0.7rem;
+            font-size: 0.9rem; /* Increased font */
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             line-height: 1;
             padding: 0;
+            transition: background-color 0.2s, color 0.2s;
         }
         .btn-timer:active { background: #444; color: #fff; }
+        .btn-timer:disabled { opacity: 0.3; cursor: not-allowed; }
 
     </style>
 </head>
@@ -376,7 +383,7 @@
             
             <!-- Timer (Added to the right of Double Mode) -->
             <div class="timer-container">
-                <button class="btn-timer" onclick="startTimer()">▶</button>
+                <button class="btn-timer" id="btn-timer-start" onclick="startTimer()">▶</button>
                 <span id="timer-display" class="timer-number">00</span>
                 <button class="btn-timer" onclick="resetTimer()">↻</button>
             </div>
@@ -507,6 +514,7 @@
         const elScoreGuest = document.getElementById('score-guest');
         const elDoubleTag = document.getElementById('double-mode-tag');
         const elTimerDisplay = document.getElementById('timer-display');
+        const elBtnTimerStart = document.getElementById('btn-timer-start');
 
         // Render Functions
         function render() {
@@ -741,6 +749,10 @@
             if (timerInterval) return; // Already running
             if (timerMinutes >= 99) return; // Limit reached
             
+            // Visual feedback immediately
+            elTimerDisplay.classList.add('running');
+            elBtnTimerStart.disabled = true; // Disable start button while running
+            
             timerInterval = setInterval(() => {
                 timerMinutes++;
                 if (timerMinutes > 99) {
@@ -756,6 +768,8 @@
         function stopTimer() {
             clearInterval(timerInterval);
             timerInterval = null;
+            elTimerDisplay.classList.remove('running');
+            elBtnTimerStart.disabled = false;
         }
         
         function resetTimer() {
